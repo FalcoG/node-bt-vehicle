@@ -8,10 +8,10 @@ const dcs = Object.values(config.wheels).map(wheel => {
 })
 
 function killSwitch () {
-  motorHat.dcs.forEach((dc) => {
-    dc.stop()
-    on = false
-  })
+  // motorHat.dcs.forEach((dc) => {
+  //   dc.stop()
+  //   on = false
+  // })
 }
 console.log('dcs', dcs)
 
@@ -25,19 +25,20 @@ stick.on('update', (ev) => {
   if (ev.name === 'RIGHT_TRIGGER') {
     if (ev.value > 0) {
       const speed = 1 / (maxTrigger - 1) * ev.value
+      console.log('current speed', speed)
 
-      if (!on) {
-        Object.values(config.wheels).forEach(wheel => {
-          const dc = motorHat.dcs[wheel.dc]
-          dc.runSync(wheel.orientation === 'forwards' ? 'fwd' : 'back');
-        })
-
-        on = true // race condition fail
-      }
-
-      motorHat.dcs.forEach((dc) => {
-        dc.setSpeed(speed)
-      })
+      // if (!on) {
+      //   Object.values(config.wheels).forEach(wheel => {
+      //     const dc = motorHat.dcs[wheel.dc]
+      //     dc.runSync(wheel.orientation === 'forwards' ? 'fwd' : 'back');
+      //   })
+      //
+      //   on = true // race condition fail
+      // }
+      //
+      // motorHat.dcs.forEach((dc) => {
+      //   dc.setSpeed(speed)
+      // })
     } else {
       killSwitch()
     }
