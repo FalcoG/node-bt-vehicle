@@ -6,7 +6,7 @@
   "wheels": {
     "FL": {
       "dc": "M1",
-      "orientation": "forwards"
+      "orientation": "backwards"
     },
     "FR": {
       "dc": "M2",
@@ -14,7 +14,7 @@
     },
     "RL": {
       "dc": "M3",
-      "orientation": "forwards"
+      "orientation": "backwards"
     },
     "RR": {
       "dc": "M4",
