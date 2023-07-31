@@ -40,7 +40,7 @@ class Driver {
   }
 
   forward(speed) {
-    if (speed > 1 ) return
+    if (speed > 100 ) return
     console.log('current speed', speed)
 
     if (!this.powered) {
