@@ -16,6 +16,8 @@ const stick = new Joystick('/dev/input/js0', { mappingFn: stadiaMapper })
 
 const maxTrigger = Math.pow(2,16) - 1
 
+const debuggerCallback = (err, result) => {}
+
 class Driver {
   powered = false
   motorHat = undefined
@@ -44,20 +46,20 @@ class Driver {
     if (!this.powered) {
       Object.values(this.config.wheels).forEach((wheel, index) => {
         const dc = this.motorHat.dcs[index]
-        dc.run(wheel.orientation === 'forwards' ? 'fwd' : 'back');
+        dc.run(wheel.orientation === 'forwards' ? 'fwd' : 'back', debuggerCallback);
       })
 
       this.powered = true // race condition fail
     }
 
     this.motorHat.dcs.forEach((dc) => {
-      dc.setSpeed(speed)
+      dc.setSpeed(speed, debuggerCallback)
     })
   }
 
   stop() {
     this.motorHat.dcs.forEach((dc) => {
-      dc.stop()
+      dc.stop(debuggerCallback)
     })
 
     this.powered = false // race condition fail
@@ -75,7 +77,7 @@ stick.on('update', (ev) => {
   console.log(ev)
   if (ev.name === 'RIGHT_TRIGGER') {
     if (ev.value > 0) {
-      const speed = 1 / (maxTrigger - 1) * ev.value
+      const speed = 100 / (maxTrigger - 1) * ev.value
       vehicle.forward(speed)
     } else {
       vehicle.stop()
