@@ -21,6 +21,42 @@ const debuggerCallback = (err, result) => {}
 class Driver {
   powered = false
   motorHat = undefined
+  direction = {
+    forwards: 0,
+    backwards: 0,
+    heading: 'forwards',
+    update: () => {
+      const x = -this.direction.backwards + this.direction.forwards
+
+      if (x === 0) this.stop()
+
+      if (x > 0) {
+        //fwd
+        if (this.direction.heading !== 'forwards') {
+          Object.values(this.config.wheels).forEach((wheel, index) => {
+            const dc = this.motorHat.dcs[index]
+            dc.run(wheel.orientation === 'forwards' ? 'fwd' : 'back', debuggerCallback);
+          })
+
+          this.direction.heading = 'forwards'
+        }
+      } else if (x < 0) {
+        //rwd
+        if (this.direction.heading !== 'backwards') {
+          Object.values(this.config.wheels).forEach((wheel, index) => {
+            const dc = this.motorHat.dcs[index]
+            dc.run(wheel.orientation === 'forwards' ? 'back' : 'fwd', debuggerCallback);
+          })
+
+          this.direction.heading = 'backwards'
+        }
+      }
+
+      this.motorHat.dcs.forEach((dc) => {
+        dc.setSpeed(Math.abs(x * 100), debuggerCallback)
+      })
+    }
+  }
 
   constructor(config) {
     this.config = config
@@ -39,28 +75,12 @@ class Driver {
     this.motorHat.init()
   }
 
-  forward(speed) {
-    if (speed > 100 ) return
-    console.log('current speed', speed)
-
-    if (!this.powered) {
-      Object.values(this.config.wheels).forEach((wheel, index) => {
-        const dc = this.motorHat.dcs[index]
-        dc.run(wheel.orientation === 'forwards' ? 'fwd' : 'back', debuggerCallback);
-      })
-
-      this.powered = true // race condition fail
-    }
-
-    this.motorHat.dcs.forEach((dc) => {
-      dc.setSpeed(speed, debuggerCallback)
-    })
-  }
-
   stop() {
     this.motorHat.dcs.forEach((dc) => {
       dc.stop(debuggerCallback)
     })
+
+    this.direction.heading = 'idle'
 
     this.powered = false // race condition fail
   }
@@ -74,14 +94,13 @@ class Driver {
 const vehicle = new Driver(config)
 
 stick.on('update', (ev) => {
-  console.log(ev)
+  // console.log(ev)
   if (ev.name === 'RIGHT_TRIGGER') {
-    if (ev.value > 0) {
-      const speed = 100 / (maxTrigger - 1) * ev.value
-      vehicle.forward(speed)
-    } else {
-      vehicle.stop()
-    }
+    vehicle.direction.forwards = 1 / (maxTrigger - 1) * ev.value
+    vehicle.direction.update()
+  } else if (ev.name === 'LEFT_TRIGGER') {
+    vehicle.direction.backwards = 1 / (maxTrigger - 1) * ev.value
+    vehicle.direction.update()
   }
 })
 
