@@ -1,0 +1,24 @@
+{
+  "controller": {
+    "source": "js0",
+    "device": "stadia"
+  },
+  "wheels": {
+    "FL": {
+      "dc": "M1",
+      "orientation": "forwards"
+    },
+    "FR": {
+      "dc": "M2",
+      "orientation": "backwards"
+    },
+    "RL": {
+      "dc": "M3",
+      "orientation": "forwards"
+    },
+    "RR": {
+      "dc": "M4",
+      "orientation": "backwards"
+    }
+  }
+}
