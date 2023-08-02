@@ -22,7 +22,7 @@ class Driver {
     forwards: 0,
     backwards: 0,
     rotation: 0,
-    heading: 'forwards',
+    heading: 'idle',
     update: () => {
       const x = -this.direction.backwards + this.direction.forwards
 
@@ -98,7 +98,6 @@ class Driver {
     this.direction.heading = 'idle'
     this.direction.forwards = 0
     this.direction.backwards = 0
-    this.direction.rotation = 0
 
     this.powered = false // todo: prevent race condition with dcs loop
   }
@@ -106,6 +105,8 @@ class Driver {
   // unexpected events
   kill() {
     this.stop()
+
+    this.direction.rotation = 0
   }
 }
 
@@ -123,7 +124,7 @@ stick.on('update', (ev) => {
   } else if (ev.name === 'LEFT_TRIGGER') {
     vehicle.direction.backwards = 1 / (maxTrigger - 1) * ev.value
     vehicle.direction.update()
-  } else if (ev.name === 'LEFT_STICK_Y') {
+  } else if (ev.name === 'LEFT_STICK_X') {
     vehicle.direction.rotation = 1 / (maxAxis) * ev.value
     vehicle.direction.update()
   }
