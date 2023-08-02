@@ -43,7 +43,14 @@ class Driver {
       Object.keys(this.wheels).forEach((key) => {
         const wheel = this.wheels[key]
 
-        const speedModifier = 1
+        let speedModifier = 1
+
+        if (
+          this.direction.rotation < 0 && (key === 'FL' || key ==='RL') ||
+          this.direction.rotation > 0 && (key === 'FR' || key ==='RR')
+        ) {
+          speedModifier = Math.abs(this.direction.rotation)
+        }
         wheel.driver.setSpeed(Math.abs(x * 100 * speedModifier), debuggerCallback)
       })
     },
@@ -91,6 +98,7 @@ class Driver {
     this.direction.heading = 'idle'
     this.direction.forwards = 0
     this.direction.backwards = 0
+    this.direction.rotation = 0
 
     this.powered = false // todo: prevent race condition with dcs loop
   }
