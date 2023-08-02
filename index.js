@@ -49,7 +49,7 @@ class Driver {
           this.direction.rotation < 0 && (key === 'FL' || key ==='RL') ||
           this.direction.rotation > 0 && (key === 'FR' || key ==='RR')
         ) {
-          speedModifier = Math.abs(this.direction.rotation)
+          speedModifier = 1 - Math.abs(this.direction.rotation)
         }
         wheel.driver.setSpeed(Math.abs(x * 100 * speedModifier), debuggerCallback)
       })
